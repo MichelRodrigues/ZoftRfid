@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Zoft Rfid</string>
+    <string name="logo_description">image central</string>
+    <string name="button_1">Cadastro de TAGs</string>
+    <string name="button_2">Busca Produto</string>
+    <string name="button_3">Consulta Itens</string>
+    <string name="button_4">Inventário</string>
+    <string name="home">logo home</string>
+    <string name="busca">ícone de busca</string>
+    <string name="consulta">ícone de consulta</string>
+    <string name="inventario">ícone de inventario</string>
+    <string name="add">adicionar cadastro</string>
+
+</resources>
