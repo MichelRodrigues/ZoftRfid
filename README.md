@@ -75,6 +75,6 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ## Contato
 
-Michel Rodrigues - [Seu Email](mailto:michel.r.machado@gmail.com)
+Michel Rodrigues - [Gmail](mailto:michel.r.machado@gmail.com)
 
 Projeto Link: [https://github.com/MichelRodrigues/ZoftRfid](https://github.com/MichelRodrigues/ZoftRfid)
