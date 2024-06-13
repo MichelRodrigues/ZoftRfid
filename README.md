@@ -12,7 +12,7 @@ ZoftRfid é um aplicativo Android para gerenciar e ler etiquetas RFID, integrado
 ## Screenshots
 
 ### Tela de login
-![Screenshot 1](screenshots/login.png)
+![Screenshot 1]('screenshots/login.png')
 
 ### Tela Inicial
 ![Screenshot 2](screenshots/home.png)
