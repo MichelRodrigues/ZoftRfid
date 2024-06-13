@@ -1,22 +1,28 @@
 package com.example.zoftrfid;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class TagRegistrationActivity extends AppCompatActivity {
 
     private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, resetIcon;
     private FloatingActionButton fabAdd;
-    private View fieldsContainer;
+    private LinearLayout fieldsContainer;
     private Button btnVincular;
     private EditText etProductCode, etDescription, etTags;
 
@@ -35,11 +41,7 @@ public class TagRegistrationActivity extends AppCompatActivity {
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fabAdd.setVisibility(View.GONE);
-                fieldsContainer.setVisibility(View.VISIBLE);
-                btnVincular.setVisibility(View.VISIBLE);
-                // Foco na primeira caixa de texto
-                etProductCode.requestFocus();
+                showConfirmationPopup();
             }
         });
 
@@ -47,7 +49,6 @@ public class TagRegistrationActivity extends AppCompatActivity {
         btnVincular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Exibir uma mensagem de Toast
                 showToast("Não foi possível vincular");
             }
         });
@@ -55,37 +56,30 @@ public class TagRegistrationActivity extends AppCompatActivity {
         resetIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Limpar o conteúdo das caixas de texto
                 etProductCode.setText("");
                 etDescription.setText("");
                 etTags.setText("");
-                // Foco na primeira caixa de texto
                 etProductCode.requestFocus();
             }
         });
 
-
+        // Monitorar alterações no campo de código do produto
         etProductCode.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Este método é chamado antes de qualquer alteração no texto
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Este método é chamado quando o texto está sendo alterado
                 if (s.length() > 0) {
-                    // Mostrar o ícone reset
                     resetIcon.setVisibility(View.VISIBLE);
                 } else {
-                    // Ocultar o ícone reset
                     resetIcon.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                // Este método é chamado após o texto ter sido alterado
             }
         });
     }
@@ -99,7 +93,7 @@ public class TagRegistrationActivity extends AppCompatActivity {
         resetIcon = findViewById(R.id.resetIcon);
         fabAdd = findViewById(R.id.fab_add);
         fieldsContainer = findViewById(R.id.fieldsContainer);
-        btnVincular = findViewById(R.id.btnVincular); // ajuste aqui para o ID correto
+        btnVincular = findViewById(R.id.btnVincular);
         etProductCode = findViewById(R.id.etProductCode);
         etDescription = findViewById(R.id.etDescription);
         etTags = findViewById(R.id.etTags);
@@ -139,5 +133,51 @@ public class TagRegistrationActivity extends AppCompatActivity {
     // Método para exibir um Toast com a mensagem fornecida
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    // Método para exibir o pop-up de confirmação ao clicar no botão flutuante
+    private void showConfirmationPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Deseja adicionar itens através de uma Nota de Entrada?");
+        builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showNotaEntradaPopup();
+            }
+        });
+        builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                fabAdd.setVisibility(View.GONE);
+                fieldsContainer.setVisibility(View.VISIBLE);
+                btnVincular.setVisibility(View.VISIBLE);
+                etProductCode.requestFocus();
+            }
+        });
+        builder.show();
+    }
+
+    // Método para exibir o pop-up da Nota de Entrada
+    private void showNotaEntradaPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Insira o número da Nota:");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showToast("Função indisponível no momento");
+            }
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                fabAdd.setVisibility(View.VISIBLE);
+                fieldsContainer.setVisibility(View.GONE);
+                btnVincular.setVisibility(View.GONE);
+            }
+        });
+        builder.show();
     }
 }
