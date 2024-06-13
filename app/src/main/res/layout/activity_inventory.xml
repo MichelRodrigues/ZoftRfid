@@ -25,22 +25,81 @@
     <LinearLayout
         android:id="@+id/footer"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="#FFFFFF"
-        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
-        <!-- Linha divisória -->
+        <!-- Linha divisória superior -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#D3D3D3"/>
+            android:background="#D3D3D3" />
 
-        <!-- Ícones do rodapé (placeholder) -->
-        <!-- Adicione seus ícones aqui -->
+        <!-- Ícones do rodapé -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/icon_home"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/home_0"
+                android:contentDescription="@string/home"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/icon_registration"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/cadastro_1"
+                android:contentDescription="@string/cadastro"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/icon_query"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/consulta_1"
+                android:contentDescription="@string/consulta"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/icon_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/busca_1"
+                android:contentDescription="@string/busca"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+
+        <!-- Linha divisória inferior -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#D3D3D3" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

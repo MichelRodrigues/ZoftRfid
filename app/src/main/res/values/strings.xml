@@ -10,5 +10,6 @@
     <string name="consulta">ícone de consulta</string>
     <string name="inventario">ícone de inventario</string>
     <string name="add">adicionar cadastro</string>
+    <string name="cadastro">ícone de cadastro</string>
 
 </resources>
