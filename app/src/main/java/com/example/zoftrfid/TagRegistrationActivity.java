@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,10 +17,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.graphics.Typeface;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.StyleSpan;
-
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +33,6 @@ public class TagRegistrationActivity extends AppCompatActivity {
     private Button btnVincular, btnVoltar;
     private EditText etProductCode, etDescription, etTags;
     private EditText etNotaNumero, etItensNota;
-
     private boolean isNotaNumeroEmpty = true; // Variável para controlar se o campo Número da Nota está vazio
 
     @Override
@@ -86,13 +87,38 @@ public class TagRegistrationActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                handleResetIconVisibility();
+                String text = s.toString();
+                Log.d("EditTextWatcher", "Text changed: " + text);
+
+                // Verificar se há caractere de retorno de carro (\r) ou nova linha (\n)
+                if (text.contains("\r") || text.contains("\n")) {
+                    // Mostrar um Toast informando que um CR foi detectado
+                    Toast.makeText(TagRegistrationActivity.this, "CR detectado", Toast.LENGTH_SHORT).show();
+                }
+
+                if (!text.isEmpty()) {
+                    // Remover o foco da caixa de texto
+                    etProductCode.clearFocus();
+
+                    // Esconder o teclado, se estiver visível
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(etProductCode.getWindowToken(), 0);
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+
+        etProductCode.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                // Se perdeu o foco, mostrar o Toast com o número de caracteres
+                resetIcon.setVisibility(View.VISIBLE);
+                showToast2();
+            }
+        });
+
 
         // Monitorar alterações no campo Número da Nota
         etNotaNumero.addTextChangedListener(new TextWatcher() {
@@ -115,6 +141,14 @@ public class TagRegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showNotaEntradaPopup();
+            }
+        });
+
+        // Configurar o clique no campo Código do Produto para abrir o pop-up
+        etProductCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProductCodePopup(); // Abrir pop-up sempre que a caixa de texto for clicada
             }
         });
     }
@@ -141,6 +175,11 @@ public class TagRegistrationActivity extends AppCompatActivity {
         SpannableString spannableHint = new SpannableString(" Toque para inserir");
         spannableHint.setSpan(new StyleSpan(Typeface.ITALIC), 0, spannableHint.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         etNotaNumero.setHint(spannableHint);
+
+        // Configurar o hint do etProductCode em itálico
+        SpannableString spannableProductHint = new SpannableString("Toque aqui para inserir ou use o gatilho");
+        spannableProductHint.setSpan(new StyleSpan(Typeface.ITALIC), 0, spannableProductHint.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        etProductCode.setHint(spannableProductHint);
     }
 
     // Método para configurar cliques nos ícones do rodapé
@@ -178,6 +217,10 @@ public class TagRegistrationActivity extends AppCompatActivity {
     private void showToast() {
         Toast.makeText(this, "Não foi possível vincular", Toast.LENGTH_SHORT).show();
     }
+    private void showToast2() {
+        Toast.makeText(this, "Enviando dados...", Toast.LENGTH_SHORT).show();
+    }
+
 
     // Método para exibir o pop-up de confirmação ao clicar no botão flutuante
     private void showConfirmationPopup() {
@@ -254,6 +297,59 @@ public class TagRegistrationActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // Método para exibir o pop-up de Código do Produto
+    private void showProductCodePopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Insira o código do produto:");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER); // Permitir apenas números
+        builder.setView(input);
+
+        // Configurar botão OK
+        builder.setPositiveButton("OK", null); // Definir o botão OK como null inicialmente
+
+        // Configurar o clique no botão Cancelar
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss(); // Fechar o pop-up ao clicar em Cancelar
+            }
+        });
+
+        // Criar o diálogo
+        final AlertDialog dialog = builder.create();
+
+        // Sobrescrever o clique do botão OK para validação personalizada
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button buttonPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                buttonPositive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String productCode = input.getText().toString().trim();
+                        if (productCode.isEmpty()) {
+                            Toast.makeText(TagRegistrationActivity.this, "Por favor, insira um código válido.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            etProductCode.setText(productCode);
+                            fabAdd.setVisibility(View.GONE);
+                            fieldsContainer.setVisibility(View.VISIBLE);
+                            fieldsContainer2.setVisibility(View.GONE);
+                            resetIcon.setVisibility(View.VISIBLE); // Mostrar o ícone de reset
+                            etProductCode.requestFocus();
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(input.getWindowToken(), 0); // Esconder o teclado
+                            dialog.dismiss(); // Fechar o pop-up apenas se um código válido foi inserido
+                        }
+                    }
+                });
+            }
+        });
+
+        // Exibir o diálogo
+        dialog.show();
+    }
+
     // Método para controlar a visibilidade do ícone de reset com base nos campos
     private void handleResetIconVisibility() {
         if (etProductCode.getText().length() > 0 || etNotaNumero.getText().length() > 0) {
@@ -290,3 +386,5 @@ public class TagRegistrationActivity extends AppCompatActivity {
         fabAdd.setVisibility(View.VISIBLE);
     }
 }
+
+
