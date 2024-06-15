@@ -22,9 +22,11 @@ public class TagRegistrationActivity extends AppCompatActivity {
 
     private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, resetIcon;
     private FloatingActionButton fabAdd;
-    private LinearLayout fieldsContainer;
-    private Button btnVincular;
+    private LinearLayout fieldsContainer,fieldsContainer2;
+    private Button btnVincular, btnVoltar;
     private EditText etProductCode, etDescription, etTags;
+
+    private EditText etNotaNumero, etItensNota;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,14 @@ public class TagRegistrationActivity extends AppCompatActivity {
         btnVincular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("Não foi possível vincular");
+                showToast();
+            }
+        });
+        btnVoltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Implemente aqui a ação de voltar para a tela inicial
+                goToInitialScreen();
             }
         });
 
@@ -59,12 +68,40 @@ public class TagRegistrationActivity extends AppCompatActivity {
                 etProductCode.setText("");
                 etDescription.setText("");
                 etTags.setText("");
-                etProductCode.requestFocus();
+                etNotaNumero.setText("");
+                etItensNota.setText("");// Reset também para Número da Nota
+                // Manter o foco no campo Número da Nota se estiver visível
+                if (fieldsContainer2.getVisibility() == View.VISIBLE) {
+                    etNotaNumero.requestFocus();
+                } else {
+                    etProductCode.requestFocus();
+                }
+
             }
         });
 
         // Monitorar alterações no campo de código do produto
         etProductCode.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    resetIcon.setVisibility(View.VISIBLE);
+                } else {
+                    resetIcon.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        // Monitorar alterações no campo Número da Nota
+        etNotaNumero.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -93,10 +130,15 @@ public class TagRegistrationActivity extends AppCompatActivity {
         resetIcon = findViewById(R.id.resetIcon);
         fabAdd = findViewById(R.id.fab_add);
         fieldsContainer = findViewById(R.id.fieldsContainer);
+        fieldsContainer2 = findViewById(R.id.fieldsContainer2);
         btnVincular = findViewById(R.id.btnVincular);
         etProductCode = findViewById(R.id.etProductCode);
         etDescription = findViewById(R.id.etDescription);
         etTags = findViewById(R.id.etTags);
+        btnVoltar = findViewById(R.id.btnVoltar);
+        // Inicialização dos novos campos
+        etNotaNumero = findViewById(R.id.etNotaNumero);
+        etItensNota = findViewById(R.id.etItensNota);
     }
 
     // Método para configurar cliques nos ícones do rodapé
@@ -131,8 +173,8 @@ public class TagRegistrationActivity extends AppCompatActivity {
     }
 
     // Método para exibir um Toast com a mensagem fornecida
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    private void showToast() {
+        Toast.makeText(this, "Não foi possível vincular", Toast.LENGTH_SHORT).show();
     }
 
     // Método para exibir o pop-up de confirmação ao clicar no botão flutuante
@@ -152,6 +194,8 @@ public class TagRegistrationActivity extends AppCompatActivity {
                 fieldsContainer.setVisibility(View.VISIBLE);
                 btnVincular.setVisibility(View.VISIBLE);
                 etProductCode.requestFocus();
+                // Oculta fieldsContainer2 se estiver visível
+                fieldsContainer2.setVisibility(View.GONE);
             }
         });
         builder.show();
@@ -162,12 +206,24 @@ public class TagRegistrationActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Insira o número da Nota:");
         final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                showToast("Função indisponível no momento");
+                // Captura o número da nota inserido pelo usuário
+                String numeroNota = input.getText().toString();
+                // Configura o número da nota no campo correspondente
+                etNotaNumero.setText(numeroNota);
+
+                // Esconder o botão flutuante e outros elementos
+                fabAdd.setVisibility(View.GONE);
+                fieldsContainer2.setVisibility(View.VISIBLE);
+                fieldsContainer.setVisibility(View.GONE);
+                resetIcon.setVisibility(View.GONE);
+
+                // Focar no campo Número da Nota
+                etNotaNumero.requestFocus();
             }
         });
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -176,8 +232,21 @@ public class TagRegistrationActivity extends AppCompatActivity {
                 fabAdd.setVisibility(View.VISIBLE);
                 fieldsContainer.setVisibility(View.GONE);
                 btnVincular.setVisibility(View.GONE);
+                // Oculta fieldsContainer2 se estiver visível
+                fieldsContainer2.setVisibility(View.GONE);
             }
         });
         builder.show();
     }
+    private void goToInitialScreen() {
+        if (fieldsContainer.getVisibility() == View.VISIBLE) {
+            fieldsContainer.setVisibility(View.GONE);
+        }
+        if (fieldsContainer2.getVisibility() == View.VISIBLE) {
+            fieldsContainer2.setVisibility(View.GONE);
+        }
+        // Exibir o botão flutuante e ocultar o botão Voltar se estiver visível
+        fabAdd.setVisibility(View.VISIBLE);
+    }
+
 }
