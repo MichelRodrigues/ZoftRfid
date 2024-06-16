@@ -6,29 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".TagRegistrationActivity">
 
-    <!-- Cabeçalho -->
+
     <TextView
         android:id="@+id/tvHeader"
         android:layout_width="0dp"
-        android:layout_height="67dp"
+        android:layout_height="66dp"
         android:background="#7a52d7"
         android:gravity="center|left"
         android:padding="16dp"
+        android:paddingStart="94dp"
         android:text="Cadastro de TAGs"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry" />
 
-
+    <ImageView
+        android:id="@+id/voltarIcon"
+        android:layout_width="37dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="310dp"
+        android:contentDescription="@string/icone_voltar"
+        android:src="@drawable/voltar_0"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvHeader" />
 
     <ImageView
         android:id="@+id/resetIcon"
         android:layout_width="54dp"
         android:layout_height="44dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="20dp"
         android:contentDescription="Reset Icon"
         android:src="@drawable/reset_0"
         android:visibility="gone"
@@ -52,8 +65,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Código do produto"
-            android:textSize="16sp"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/etProductCode"
@@ -172,15 +185,6 @@
             android:gravity="top"
             android:background="@drawable/rounded_edittext"
             android:layout_marginTop="8dp" />
-        <Button
-            android:id="@+id/btnVoltar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Voltar"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#7a52d7"
-            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 

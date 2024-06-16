@@ -27,10 +27,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class TagRegistrationActivity extends AppCompatActivity {
 
-    private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, resetIcon;
+    private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, resetIcon, btnVoltar;
     private FloatingActionButton fabAdd;
     private LinearLayout fieldsContainer, fieldsContainer2;
-    private Button btnVincular, btnVoltar;
+    private Button btnVincular;
     private EditText etProductCode, etDescription, etTags;
     private EditText etNotaNumero, etItensNota;
     private boolean isNotaNumeroEmpty = true; // Variável para controlar se o campo Número da Nota está vazio
@@ -112,8 +112,8 @@ public class TagRegistrationActivity extends AppCompatActivity {
         });
 
         etProductCode.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                // Se perdeu o foco, mostrar o Toast com o número de caracteres
+            if (etProductCode.getText().length() > 0 && !hasFocus) {
+                // Se perdeu o foco, mostrar o Toast
                 resetIcon.setVisibility(View.VISIBLE);
                 showToast2();
             }
@@ -167,17 +167,17 @@ public class TagRegistrationActivity extends AppCompatActivity {
         etProductCode = findViewById(R.id.etProductCode);
         etDescription = findViewById(R.id.etDescription);
         etTags = findViewById(R.id.etTags);
-        btnVoltar = findViewById(R.id.btnVoltar);
+        btnVoltar = findViewById(R.id.voltarIcon);
         etNotaNumero = findViewById(R.id.etNotaNumero);
         etItensNota = findViewById(R.id.etItensNota);
 
         // Configurar o hint do etNotaNumero em itálico
-        SpannableString spannableHint = new SpannableString(" Toque para inserir");
+        SpannableString spannableHint = new SpannableString(" Toque aqui para inserir");
         spannableHint.setSpan(new StyleSpan(Typeface.ITALIC), 0, spannableHint.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         etNotaNumero.setHint(spannableHint);
 
         // Configurar o hint do etProductCode em itálico
-        SpannableString spannableProductHint = new SpannableString("Toque aqui para inserir ou use o gatilho");
+        SpannableString spannableProductHint = new SpannableString(" Toque aqui para inserir ou use o leitor");
         spannableProductHint.setSpan(new StyleSpan(Typeface.ITALIC), 0, spannableProductHint.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         etProductCode.setHint(spannableProductHint);
     }
@@ -218,7 +218,7 @@ public class TagRegistrationActivity extends AppCompatActivity {
         Toast.makeText(this, "Não foi possível vincular", Toast.LENGTH_SHORT).show();
     }
     private void showToast2() {
-        Toast.makeText(this, "Enviando dados...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Buscando dados...", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -237,6 +237,7 @@ public class TagRegistrationActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 fabAdd.setVisibility(View.GONE);
                 fieldsContainer.setVisibility(View.VISIBLE);
+                btnVoltar.setVisibility(View.VISIBLE);
                 btnVincular.setVisibility(View.VISIBLE);
                 etProductCode.requestFocus();
                 fieldsContainer2.setVisibility(View.GONE);
@@ -285,7 +286,9 @@ public class TagRegistrationActivity extends AppCompatActivity {
                             fieldsContainer2.setVisibility(View.VISIBLE);
                             fieldsContainer.setVisibility(View.GONE);
                             resetIcon.setVisibility(View.VISIBLE); // Mostrar o ícone de reset
+                            btnVoltar.setVisibility(View.VISIBLE);
                             etNotaNumero.requestFocus();
+                            showToast2();
                             dialog.dismiss(); // Fechar o pop-up apenas se um número válido foi inserido
                         }
                     }
@@ -312,6 +315,8 @@ public class TagRegistrationActivity extends AppCompatActivity {
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(input.getWindowToken(), 0); // Esconder o teclado
                 dialog.dismiss(); // Fechar o pop-up ao clicar em Cancelar
             }
         });
@@ -335,6 +340,7 @@ public class TagRegistrationActivity extends AppCompatActivity {
                             fabAdd.setVisibility(View.GONE);
                             fieldsContainer.setVisibility(View.VISIBLE);
                             fieldsContainer2.setVisibility(View.GONE);
+                            btnVoltar.setVisibility(View.VISIBLE);
                             resetIcon.setVisibility(View.VISIBLE); // Mostrar o ícone de reset
                             etProductCode.requestFocus();
                             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -378,9 +384,16 @@ public class TagRegistrationActivity extends AppCompatActivity {
     // Método para voltar para a tela inicial
     private void goToInitialScreen() {
         // Esconder os containers de campos
+        etProductCode.setText("");
+        etDescription.setText("");
+        etTags.setText("");
+        etNotaNumero.setText("");
+        etItensNota.setText("");
         fieldsContainer.setVisibility(View.GONE);
         fieldsContainer2.setVisibility(View.GONE);
         resetIcon.setVisibility(View.GONE);
+        btnVoltar.setVisibility(View.GONE);
+        etProductCode.requestFocus();
 
         // Exibir o botão flutuante
         fabAdd.setVisibility(View.VISIBLE);

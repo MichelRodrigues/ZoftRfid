@@ -11,5 +11,7 @@
     <string name="inventario">ícone de inventario</string>
     <string name="add">adicionar cadastro</string>
     <string name="cadastro">ícone de cadastro</string>
+    <string name="ícone_voltar">ícone voltar</string>
+    <string name="icone_voltar">icone_voltar</string>
 
 </resources>
