@@ -6,100 +6,229 @@
     android:layout_height="match_parent"
     tools:context=".ProductSearchActivity">
 
-    <!-- Cabeçalho -->
     <TextView
         android:id="@+id/tvHeader"
         android:layout_width="0dp"
-        android:layout_height="67dp"
+        android:layout_height="wrap_content"
         android:background="#7a52d7"
         android:gravity="center|left"
         android:padding="16dp"
+        android:paddingStart="75dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/tvHeaderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Busca Produto"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/tvHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintStart_toStartOf="@+id/tvHeader"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Rodapé -->
+    <ImageView
+        android:id="@+id/icon_header"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:contentDescription="@string/cadastro"
+        android:paddingStart="0dp"
+        android:src="@drawable/busca_0"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/tvHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/tvHeaderText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.530" />
+
+    <ImageView
+        android:id="@+id/voltarIcon"
+        android:layout_width="37dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="7dp"
+        android:contentDescription="@string/icone_voltar"
+        android:src="@drawable/voltar_0"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvHeader" />
+
+    <ImageView
+        android:id="@+id/resetIcon"
+        android:layout_width="54dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="20dp"
+        android:contentDescription="Reset Icon"
+        android:src="@drawable/reset_0"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvHeader" />
+
     <LinearLayout
-        android:id="@+id/footer"
+        android:id="@+id/fieldsContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        android:background="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeader">
 
-        <!-- Linha divisória superior -->
-        <View
+        <!-- Campo Código do Produto -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Código do produto"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etProductCode"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#D3D3D3" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:cursorVisible="false"
+            android:inputType="number" />
 
-        <!-- Ícones do rodapé -->
-        <LinearLayout
+        <!-- Campo Descrição -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Descrição"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etDescription"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:cursorVisible="false"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:minLines="3" />
 
-            <ImageView
-                android:id="@+id/icon_home"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/home_0"
-                android:contentDescription="@string/home"
-                android:padding="8dp"
-                android:scaleType="centerInside"
-                android:clickable="true"
-                android:focusable="true" />
+        <!-- Campo TAGs -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="TAGs"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
-            <ImageView
-                android:id="@+id/icon_registration"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/cadastro_1"
-                android:contentDescription="@string/cadastro"
-                android:padding="8dp"
-                android:scaleType="centerInside"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <ImageView
-                android:id="@+id/icon_query"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/consulta_1"
-                android:contentDescription="@string/consulta"
-                android:padding="8dp"
-                android:scaleType="centerInside"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <ImageView
-                android:id="@+id/icon_inventory"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/inventario_1"
-                android:contentDescription="@string/inventario"
-                android:padding="8dp"
-                android:scaleType="centerInside"
-                android:clickable="true"
-                android:focusable="true" />
-
-        </LinearLayout>
-
-        <!-- Linha divisória inferior -->
-        <View
+        <EditText
+            android:id="@+id/etTags"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#D3D3D3" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_edittext"
+            android:cursorVisible="false"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:maxLines="10"
+            android:minLines="5"
+            android:scrollbars="vertical" />
 
+        <!-- Botão Vincular -->
+        <Button
+            android:id="@+id/btnVincular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#7a52d7"
+            android:text="Vincular"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 
+    <!-- Segundo Container para Número da Nota e Itens da Nota -->
+    <LinearLayout
+        android:id="@+id/fieldsContainer2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeader">
+
+        <!-- Campo Número da Nota -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Número da Nota"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etNotaNumero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:cursorVisible="false"
+            android:inputType="number" />
+
+        <!-- Campo Itens da Nota -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Itens da Nota"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etItensNota"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:cursorVisible="false"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:maxLines="20"
+            android:minLines="10" />
+    </LinearLayout>
+
+    <!-- Botão Flutuante -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/add"
+        android:src="@drawable/add_0"
+        app:backgroundTint="#FF3366"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeader"
+        app:layout_constraintVertical_bias="0.809" />
+
+    <include
+        layout="@layout/footer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

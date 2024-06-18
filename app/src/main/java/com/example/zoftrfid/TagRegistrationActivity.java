@@ -27,7 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class TagRegistrationActivity extends AppCompatActivity {
 
-    private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, resetIcon, btnVoltar;
+    private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, resetIcon, iconRegistration, btnVoltar;
     private FloatingActionButton fabAdd;
     private LinearLayout fieldsContainer, fieldsContainer2;
     private Button btnVincular;
@@ -159,6 +159,7 @@ public class TagRegistrationActivity extends AppCompatActivity {
         searchIcon = findViewById(R.id.icon_search);
         queryIcon = findViewById(R.id.icon_query);
         inventoryIcon = findViewById(R.id.icon_inventory);
+        iconRegistration = findViewById(R.id.icon_registration);
         resetIcon = findViewById(R.id.resetIcon);
         fabAdd = findViewById(R.id.fab_add);
         fieldsContainer = findViewById(R.id.fieldsContainer);
@@ -180,37 +181,6 @@ public class TagRegistrationActivity extends AppCompatActivity {
         SpannableString spannableProductHint = new SpannableString(" Toque aqui para inserir ou use o leitor");
         spannableProductHint.setSpan(new StyleSpan(Typeface.ITALIC), 0, spannableProductHint.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         etProductCode.setHint(spannableProductHint);
-    }
-
-    // Método para configurar cliques nos ícones do rodapé
-    private void setupFooterIcons() {
-        homeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TagRegistrationActivity.this, MainScreenActivity.class));
-            }
-        });
-
-        searchIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TagRegistrationActivity.this, ProductSearchActivity.class));
-            }
-        });
-
-        queryIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TagRegistrationActivity.this, ItemQueryActivity.class));
-            }
-        });
-
-        inventoryIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TagRegistrationActivity.this, InventoryActivity.class));
-            }
-        });
     }
 
     // Método para exibir um Toast com a mensagem fornecida
@@ -398,6 +368,47 @@ public class TagRegistrationActivity extends AppCompatActivity {
         // Exibir o botão flutuante
         fabAdd.setVisibility(View.VISIBLE);
     }
+    // Método para destacar o ícone e desabilitá-lo
+    private void highlightIconAndDisable(ImageView icon) {
+        icon.setBackgroundResource(R.drawable.rounded_background); // Aplicar o fundo ovalado
+        icon.setEnabled(false); // Desabilitar o ícone
+        icon.setClickable(false); // Tornar o ícone não clicável
+    }
+
+    private void setupFooterIcons() {
+        // Destacar e desabilitar o ícone de registro, pois estamos na TagRegistrationActivity
+        highlightIconAndDisable(iconRegistration);
+
+        homeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TagRegistrationActivity.this, MainScreenActivity.class));
+            }
+        });
+
+        searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TagRegistrationActivity.this, ProductSearchActivity.class));
+            }
+        });
+
+        queryIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TagRegistrationActivity.this, ItemQueryActivity.class));
+            }
+        });
+
+        inventoryIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TagRegistrationActivity.this, InventoryActivity.class));
+            }
+        });
+    }
+
+
 }
 
 

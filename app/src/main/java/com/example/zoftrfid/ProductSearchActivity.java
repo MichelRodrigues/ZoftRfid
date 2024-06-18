@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ProductSearchActivity extends AppCompatActivity {
-    private ImageView homeIcon, registrationIcon, queryIcon, inventoryIcon;
+    private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, iconRegistration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +24,23 @@ public class ProductSearchActivity extends AppCompatActivity {
     // Método para inicializar elementos da UI
     private void initViews() {
         homeIcon = findViewById(R.id.icon_home);
-        registrationIcon = findViewById(R.id.icon_registration);
+        searchIcon = findViewById(R.id.icon_search);
         queryIcon = findViewById(R.id.icon_query);
         inventoryIcon = findViewById(R.id.icon_inventory);
+        iconRegistration = findViewById(R.id.icon_registration);
     }
 
-    // Método para configurar cliques nos ícones do rodapé
+    // Método para destacar o ícone e desabilitá-lo
+    private void highlightIconAndDisable(ImageView icon) {
+        icon.setBackgroundResource(R.drawable.rounded_background); // Aplicar o fundo ovalado
+        icon.setEnabled(false); // Desabilitar o ícone
+        icon.setClickable(false); // Tornar o ícone não clicável
+    }
+
     private void setupFooterIcons() {
+        // Destacar e desabilitar o ícone de registro, pois estamos na TagRegistrationActivity
+        highlightIconAndDisable(searchIcon);
+
         homeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,7 +48,7 @@ public class ProductSearchActivity extends AppCompatActivity {
             }
         });
 
-        registrationIcon.setOnClickListener(new View.OnClickListener() {
+        iconRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ProductSearchActivity.this, TagRegistrationActivity.class));

@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ItemQueryActivity extends AppCompatActivity {
-    private ImageView homeIcon, registrationIcon, searchIcon, inventoryIcon;
+    private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, iconRegistration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +24,22 @@ public class ItemQueryActivity extends AppCompatActivity {
     // Método para inicializar elementos da UI
     private void initViews() {
         homeIcon = findViewById(R.id.icon_home);
-        registrationIcon = findViewById(R.id.icon_registration);
         searchIcon = findViewById(R.id.icon_search);
+        queryIcon = findViewById(R.id.icon_query);
         inventoryIcon = findViewById(R.id.icon_inventory);
+        iconRegistration = findViewById(R.id.icon_registration);
     }
 
     // Método para configurar cliques nos ícones do rodapé
+    private void highlightIconAndDisable(ImageView icon) {
+        icon.setBackgroundResource(R.drawable.rounded_background); // Aplicar o fundo ovalado
+        icon.setEnabled(false); // Desabilitar o ícone
+        icon.setClickable(false); // Tornar o ícone não clicável
+    }
     private void setupFooterIcons() {
+        // Destacar e desabilitar o ícone de registro, pois estamos na TagRegistrationActivity
+        highlightIconAndDisable(queryIcon);
+
         homeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,17 +47,10 @@ public class ItemQueryActivity extends AppCompatActivity {
             }
         });
 
-        registrationIcon.setOnClickListener(new View.OnClickListener() {
+        iconRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ItemQueryActivity.this, TagRegistrationActivity.class));
-            }
-        });
-
-        searchIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ItemQueryActivity.this, ProductSearchActivity.class));
             }
         });
 
@@ -56,6 +58,13 @@ public class ItemQueryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ItemQueryActivity.this, InventoryActivity.class));
+            }
+        });
+
+        searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ItemQueryActivity.this, ProductSearchActivity.class));
             }
         });
     }

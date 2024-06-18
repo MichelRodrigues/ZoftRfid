@@ -1,0 +1,6 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#F0F0F0" /> <!-- Cor de fundo do ícone destacado (cinza claro) -->
+    <corners android:radius="12dp" /> <!-- Cantos arredondados menores -->
+    <size android:width="38dp" android:height="48dp" /> <!-- Tamanho reduzido do fundo arredondado -->
+</shape>
