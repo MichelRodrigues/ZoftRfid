@@ -18,12 +18,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Random;
 
 public class TagRegistrationActivity extends AppCompatActivity {
 
@@ -32,14 +37,18 @@ public class TagRegistrationActivity extends AppCompatActivity {
     private static final String TOAST_INSERIR_NUMERO_VALIDO = "Por favor, insira um número válido.";
     private static final String TOAST_NAO_FOI_POSSIVEL_VINCULAR = "Não foi possível vincular";
     private static final String TOAST_BUSCANDO_DADOS = "Buscando dados...";
+    private static final String TOAST_NOTA_N_ENCONTRADA = "Nota não encontrada com esse número.";
+    private static final String TOAST_ITENS_INSERIDOS = "Itens inseridos com sucesso!";
 
     private ImageView homeIcon, searchIcon, queryIcon, inventoryIcon, resetIcon, iconRegistration, btnVoltar;
     private FloatingActionButton fabAdd;
     private LinearLayout fieldsContainer, fieldsContainer2;
     private Button btnVincular;
     private EditText etProductCode, etDescription, etTags;
-    private EditText etNotaNumero, etItensNota;
+    private EditText etNotaNumero;
     private boolean isNotaNumeroEmpty = true;
+    private boolean isRowTouched = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +76,6 @@ public class TagRegistrationActivity extends AppCompatActivity {
         etTags = findViewById(R.id.etTags);
         btnVoltar = findViewById(R.id.voltarIcon);
         etNotaNumero = findViewById(R.id.etNotaNumero);
-        etItensNota = findViewById(R.id.etItensNota);
 
         SpannableString spannableHint = new SpannableString(" Toque aqui para inserir");
         spannableHint.setSpan(new StyleSpan(Typeface.ITALIC), 0, spannableHint.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -90,14 +98,23 @@ public class TagRegistrationActivity extends AppCompatActivity {
     private void setupListeners() {
         fabAdd.setOnClickListener(v -> showConfirmationPopup());
         btnVincular.setOnClickListener(v -> showToast(TOAST_NAO_FOI_POSSIVEL_VINCULAR));
-        btnVoltar.setOnClickListener(v -> goToInitialScreen());
-        resetIcon.setOnClickListener(v -> resetFields());
+        btnVoltar.setOnClickListener(v -> {
+            if (isRowTouched) {
+                goToPreviousScreen();
+            } else {
+                goToInitialScreen();
+            }
+        });
+        resetIcon.setOnClickListener(v -> {
+            resetFields();  // Chama resetFields que agora inclui a limpeza da tabela
+        });
 
         etProductCode.addTextChangedListener(createTextWatcher());
         etProductCode.setOnFocusChangeListener((v, hasFocus) -> {
             if (etProductCode.getText().length() > 0 && !hasFocus) {
                 resetIcon.setVisibility(View.VISIBLE);
                 showToast(TOAST_BUSCANDO_DADOS);
+                etProductCode.setEnabled(false);
             }
         });
 
@@ -153,8 +170,11 @@ public class TagRegistrationActivity extends AppCompatActivity {
             fieldsContainer.setVisibility(View.VISIBLE);
             btnVoltar.setVisibility(View.VISIBLE);
             btnVincular.setVisibility(View.VISIBLE);
+            etProductCode.setEnabled(true);
             etProductCode.requestFocus();
             fieldsContainer2.setVisibility(View.GONE);
+            etProductCode.setText("");
+            isRowTouched = false;
         });
         builder.show();
     }
@@ -181,6 +201,13 @@ public class TagRegistrationActivity extends AppCompatActivity {
                 if (notaNumero.isEmpty()) {
                     showToast(TOAST_INSERIR_NUMERO_VALIDO);
                 } else {
+                    if (notaNumero.equals("123")) {
+                        populateTableWithExampleData();
+                        showToast(TOAST_ITENS_INSERIDOS);
+                    } else {
+                        clearTable();
+                        showToast(TOAST_NOTA_N_ENCONTRADA);
+                    }
                     etNotaNumero.setText(notaNumero);
                     isNotaNumeroEmpty = false;
                     fabAdd.setVisibility(View.GONE);
@@ -189,7 +216,7 @@ public class TagRegistrationActivity extends AppCompatActivity {
                     resetIcon.setVisibility(View.VISIBLE);
                     btnVoltar.setVisibility(View.VISIBLE);
                     etNotaNumero.requestFocus();
-                    showToast(TOAST_BUSCANDO_DADOS);
+                    hideKeyboard(input);
                     dialog.dismiss();
                 }
             });
@@ -237,25 +264,59 @@ public class TagRegistrationActivity extends AppCompatActivity {
     }
 
     private void handleResetIconVisibility() {
-        if (etProductCode.getText().length() > 0 || etNotaNumero.getText().length() > 0) {
+        if ((etProductCode.getText().length() > 0 || etNotaNumero.getText().length() > 0 || etTags.getText().length() > 0) && fabAdd.getVisibility() != View.VISIBLE) {
             resetIcon.setVisibility(View.VISIBLE);
         } else {
             resetIcon.setVisibility(View.GONE);
         }
+        handleFocus();
     }
 
     private void resetFields() {
-        etProductCode.setText("");
-        etDescription.setText("");
-        etTags.setText("");
-        etNotaNumero.setText("");
-        etItensNota.setText("");
-        isNotaNumeroEmpty = true;
-
-        if (fieldsContainer2.getVisibility() == View.VISIBLE) {
-            etNotaNumero.requestFocus();
+        if (isRowTouched) {
+            etTags.setText("");
+            etTags.requestFocus();
         } else {
-            etProductCode.requestFocus();
+            etProductCode.setText("");
+            etDescription.setText("");
+            etTags.setText("");
+            etNotaNumero.setText("");
+            isNotaNumeroEmpty = true;
+            etProductCode.setEnabled(true);
+            // Limpar a tabela
+            clearTable();
+        }
+
+        handleFocus();
+
+    }
+    private void handleFocus() {
+        Log.d("HandleFocus", "fieldsContainer visibility: " + fieldsContainer.getVisibility());
+        Log.d("HandleFocus", "fieldsContainer2 visibility: " + fieldsContainer2.getVisibility());
+        Log.d("HandleFocus", "isRowTouched: " + isRowTouched);
+
+        if (fieldsContainer.getVisibility() == View.VISIBLE && fieldsContainer2.getVisibility() == View.GONE) {
+            if (isRowTouched) {
+                Log.d("HandleFocus", "Focusing on etTags");
+                etTags.requestFocus();
+            } else {
+                Log.d("HandleFocus", "Focusing on etProductCode");
+                etProductCode.requestFocus();
+            }
+        } else if (fieldsContainer2.getVisibility() == View.VISIBLE && fieldsContainer.getVisibility() == View.GONE) {
+            Log.d("HandleFocus", "Focusing on etNotaNumero");
+            etNotaNumero.requestFocus();
+        }
+    }
+
+    // Método para apagar todos os itens da tabela, exceto o cabeçalho
+    private void clearTable() {
+        TableLayout tableLayout = findViewById(R.id.tblItensNota);
+        int childCount = tableLayout.getChildCount();
+        // Verifica se a tabela tem linhas para evitar exceções
+        if (childCount > 1) {
+            // Remove todas as linhas exceto a primeira (que assumimos ser o cabeçalho)
+            tableLayout.removeViews(1, childCount - 1);
         }
     }
 
@@ -264,18 +325,124 @@ public class TagRegistrationActivity extends AppCompatActivity {
         etDescription.setText("");
         etTags.setText("");
         etNotaNumero.setText("");
-        etItensNota.setText("");
         fieldsContainer.setVisibility(View.GONE);
         fieldsContainer2.setVisibility(View.GONE);
         resetIcon.setVisibility(View.GONE);
         btnVoltar.setVisibility(View.GONE);
-        etProductCode.requestFocus();
         fabAdd.setVisibility(View.VISIBLE);
+
+        etProductCode.setEnabled(false);
+    }
+
+    private void goToPreviousScreen() {
+        etProductCode.setText("");
+        etDescription.setText("");
+        etTags.setText("");
+        fieldsContainer.setVisibility(View.GONE);
+        fieldsContainer2.setVisibility(View.VISIBLE);
+        resetIcon.setVisibility(View.GONE);
+        btnVoltar.setVisibility(View.VISIBLE);
+        fabAdd.setVisibility(View.GONE);
+        resetIcon.setVisibility(View.VISIBLE);
+        isRowTouched = false;
+        etNotaNumero.requestFocus();
+        etTags.setEnabled(true);
+
+        etProductCode.setEnabled(false);
     }
 
     private void highlightIconAndDisable(ImageView icon) {
         icon.setBackgroundResource(R.drawable.rounded_background);
         icon.setEnabled(false);
         icon.setClickable(false);
+    }
+
+    // Método para popular a tabela com dados de exemplo
+    private void populateTableWithExampleData() {
+        clearTable(); // Limpa a tabela antes de popular com os dados de exemplo
+
+        TableLayout tableLayout = findViewById(R.id.tblItensNota);
+
+        String[][] exampleData = {
+                {"1", "JBL, Caixa de Som, Bluetooth, Go - Preta", " 10", " "},
+                {"2", "Gamepad para Celular - Controle Sem Fio Bluetooth", " 12", " "},
+                {"3", "Película de Nano Vidro para Nintendo Switch", " 15", " "},
+                {"4", "Carregador Universal Ultra Rápido Duo, 1 X USB-C Power Delivery 20W", " 20", " "},
+                {"5", "Cabo USB-C em nylon 1,5 m EUAC 15NB Branco Intelbras", " 7", " "},
+                {"6", "Suporte de Mesa Para Celular 360 graus Ajustável Articulado", " 5", " "},
+                {"7", "Capa Samsung Galaxy S20 - Transparente", "30", " "},
+                {"8", "Fone De Ouvido Bluetooth Sem Fio tws", " 11", " "},
+                {"9", "Capa Para iPhone 15 Pro Max Liquid Crystal Clear Spigen - Original", " 15", " "},
+                {"10", "Power Bank 20000mAh Portátil com Display LED para iPhone e Android", "3", " "}
+        };
+
+        for (int i = 0; i < exampleData.length; i++) {
+            final int index = i;
+            TableRow row = new TableRow(this);
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+            row.setLayoutParams(lp);
+
+            // Define click listener for the row
+            row.setOnClickListener(v -> {
+                etProductCode.setText(generateRandomBarcode());
+                etDescription.setText(exampleData[index][1]);
+                fabAdd.setVisibility(View.GONE);
+                fieldsContainer.setVisibility(View.VISIBLE);
+                btnVoltar.setVisibility(View.VISIBLE);
+                btnVincular.setVisibility(View.VISIBLE);
+                etProductCode.setEnabled(false);
+                etDescription.setEnabled(false);
+                fieldsContainer2.setVisibility(View.GONE);
+                isRowTouched = true;
+                Log.d("RowClickListener", "isRowTouched set to true");
+
+                handleResetIconVisibility();
+                handleFocus();
+
+            });
+
+            // Create TextView for each cell and set fixed width
+            TextView tvNumero = new TextView(this);
+            tvNumero.setText(exampleData[i][0]);
+            tvNumero.setPadding(dpToPx(0), dpToPx(8), dpToPx(8), dpToPx(8));
+            tvNumero.setWidth(dpToPx(30)); // Set fixed width in dp
+            row.addView(tvNumero);
+
+            TextView tvDescricao = new TextView(this);
+            tvDescricao.setText(exampleData[i][1]);
+            tvDescricao.setPadding(dpToPx(0), dpToPx(8), dpToPx(8), dpToPx(8));
+            tvDescricao.setWidth(dpToPx(200)); // Set fixed width in dp
+            row.addView(tvDescricao);
+
+            TextView tvQtd = new TextView(this);
+            tvQtd.setText(exampleData[i][2]);
+            tvQtd.setPadding(dpToPx(18), dpToPx(8), dpToPx(8), dpToPx(8));
+            tvQtd.setWidth(dpToPx(50)); // Set fixed width in dp
+            row.addView(tvQtd);
+
+            TextView tvTAG = new TextView(this);
+            tvTAG.setText(exampleData[i][3]);
+            tvTAG.setPadding(dpToPx(13), dpToPx(8), dpToPx(8), dpToPx(8));
+            tvTAG.setWidth(dpToPx(50)); // Set fixed width in dp
+            row.addView(tvTAG);
+
+            tableLayout.addView(row);
+        }
+    }
+
+    // Auxiliary function to convert dp to pixels
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
+    }
+
+    // Método para gerar código de barras aleatório
+    private String generateRandomBarcode() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 13; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return sb.toString();
     }
 }

@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Erro ao processar resposta JSON", e);
-                Toast.makeText(activity, "Erro ao processar resposta JSON", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Erro! Verifique a conexão com a internet.", Toast.LENGTH_SHORT).show();
             }
         }
     }

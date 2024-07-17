@@ -79,8 +79,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:padding="12dp"
-        android:visibility="gone"
+        android:padding="16dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/footer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -97,7 +97,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:fillViewport="true">
 
@@ -105,7 +105,7 @@
                 android:id="@+id/tblItensRelatorio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="8dp"
                 android:background="#FFF"
                 android:padding="4dp"
                 android:stretchColumns="1,2,3,4,5">
@@ -206,38 +206,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/containerLastRecords"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/fab_add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvHeader">
-
-        <TextView
-            android:id="@+id/lastRecordsTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Últimos Registros"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center_horizontal"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp" />
-
-        <ListView
-            android:id="@+id/listLastRecords"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="8dp" />
-
-    </LinearLayout>
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
@@ -257,16 +225,13 @@
         android:id="@+id/btn_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:contentDescription="Save"
         android:src="@drawable/disk_0"
-        app:backgroundTint="#7a52d7"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:backgroundTint="@android:color/system_on_error_container_dark"
+        app:layout_constraintBottom_toTopOf="@+id/footer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.89"
-        app:tint="#FFFFFF" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <include
         layout="@layout/footer_layout"
