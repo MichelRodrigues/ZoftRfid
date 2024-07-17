@@ -31,8 +31,8 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/tvHeader"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.3"
-        app:layout_constraintStart_toStartOf="@+id/tvHeader"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toEndOf="@+id/voltarIcon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -54,7 +54,7 @@
         android:id="@+id/voltarIcon"
         android:layout_width="37dp"
         android:layout_height="39dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="14dp"
         android:layout_marginTop="7dp"
         android:contentDescription="@string/icone_voltar"
         android:src="@drawable/voltar_0"
@@ -74,6 +74,59 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tvHeader" />
 
+    <!-- Caixa de pesquisa -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/searchContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="500dp"
+        android:background="@drawable/rounded_edittext"
+        android:padding="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader">
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:hint="Código do produto ou Nº da TAG"
+            android:padding="8dp"
+            android:textColorHint="#888888"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ivSearchIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivSearchIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/busca_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:text="0"
+        android:textSize="90sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchContainer" />
+
     <LinearLayout
         android:id="@+id/fieldsContainer"
         android:layout_width="0dp"
@@ -87,26 +140,12 @@
         app:layout_constraintTop_toBottomOf="@+id/tvHeader">
 
         <!-- Campo Código do Produto -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Código do produto"
-            android:textColor="#000000"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/etProductCode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_edittext"
-            android:cursorVisible="false"
-            android:inputType="number" />
 
         <!-- Campo Descrição -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="160dp"
             android:text="Descrição"
             android:textColor="#000000"
             android:textSize="16sp" />
@@ -123,105 +162,32 @@
             android:minLines="3" />
 
         <!-- Campo TAGs -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="TAGs"
-            android:textColor="#000000"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/etTags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/rounded_edittext"
-            android:cursorVisible="false"
-            android:gravity="top"
-            android:inputType="textMultiLine"
-            android:maxLines="10"
-            android:minLines="5"
-            android:scrollbars="vertical" />
 
         <!-- Botão Vincular -->
-        <Button
-            android:id="@+id/btnVincular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#7a52d7"
-            android:text="Vincular"
-            android:textColor="#FFFFFF" />
     </LinearLayout>
 
-    <!-- Segundo Container para Número da Nota e Itens da Nota -->
-    <LinearLayout
-        android:id="@+id/fieldsContainer2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/footer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvHeader">
-
-        <!-- Campo Número da Nota -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Número da Nota"
-            android:textColor="#000000"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/etNotaNumero"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_edittext"
-            android:cursorVisible="false"
-            android:inputType="number" />
-
-        <!-- Campo Itens da Nota -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Itens da Nota"
-            android:textColor="#000000"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/etItensNota"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/rounded_edittext"
-            android:cursorVisible="false"
-            android:gravity="top"
-            android:inputType="textMultiLine"
-            android:maxLines="20"
-            android:minLines="10" />
-    </LinearLayout>
-
-    <!-- Botão Flutuante -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/add"
-        android:src="@drawable/add_0"
-        app:backgroundTint="#FF3366"
+    <Button
+        android:id="@+id/btnIniciar"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="68dp"
+        android:text="Iniciar"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvHeader"
-        app:layout_constraintVertical_bias="0.809" />
+        app:layout_constraintEnd_toStartOf="@+id/btnLimpar"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnLimpar"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="68dp"
+        android:text="Limpar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <include
         layout="@layout/footer_layout"
@@ -231,4 +197,3 @@
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
