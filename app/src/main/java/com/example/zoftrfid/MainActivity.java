@@ -1,26 +1,35 @@
 package com.example.zoftrfid;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText etUsername, etPassword;
+    private Button btnLogin;
+    private ProgressBar progressBar;
     private static final String TAG = "MainActivity";
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,22 +39,41 @@ public class MainActivity extends AppCompatActivity {
         // Inicializar os componentes
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
-        Button btnLogin = findViewById(R.id.btnLogin);
+        btnLogin = findViewById(R.id.btnLogin);
+        progressBar = findViewById(R.id.progressBar);
 
         // Configurar o listener do botão
         btnLogin.setOnClickListener(v -> {
             String username = etUsername.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
+            // Ocultar o teclado
+            hideKeyboard();
+
+            // Desabilitar o botão "Enviar" para evitar múltiplos cliques
+            btnLogin.setEnabled(false);
+            progressBar.setVisibility(View.VISIBLE);
+
             // Verificar se os campos estão vazios
             if (username.isEmpty() && password.isEmpty()) {
-                // Ir diretamente para a próxima tela se ambos os campos estiverem vazios
+                // Chamar a MainScreenActivity se ambos os campos estiverem vazios
                 goToMainScreen();
             } else {
-                // Executar a tarefa de autenticação se qualquer campo estiver preenchido
-                new AuthenticateUserTask(this).execute(username, password);
+                // Executar a tarefa de autenticação se os campos não estiverem vazios
+                authenticateUser(username, password);
             }
         });
+    }
+
+    // Método para ocultar o teclado
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            View view = getCurrentFocus();
+            if (view != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
     }
 
     // Método para navegar para a tela principal
@@ -55,28 +83,26 @@ public class MainActivity extends AppCompatActivity {
         finish(); // Encerra a atividade atual para evitar que o usuário volte para ela pelo botão de voltar do dispositivo
     }
 
-    private static class AuthenticateUserTask extends AsyncTask<String, Void, String> {
-        private final WeakReference<MainActivity> activityReference;
+    // Método que cria e configura a conexão HTTP
+    private HttpURLConnection createConnection() throws Exception {
+        URL url = new URL("http://177.234.156.125:9000/login");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json; utf-8");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setDoOutput(true);
+        return conn;
+    }
 
-        AuthenticateUserTask(MainActivity context) {
-            this.activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String username = params[0];
-            String password = params[1];
+    private void authenticateUser(String username, String password) {
+        executorService.execute(() -> {
             String result = "";
 
             try {
-                URL url = new URL("http://177.234.156.125:9000/login");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json; utf-8");
-                conn.setRequestProperty("Accept", "application/json");
-                conn.setDoOutput(true);
+                // Usar o método createConnection para configurar a conexão HTTP
+                HttpURLConnection conn = createConnection();
 
-                // Criação do JSON a partir das credenciais
+                // Criação do JSON a partir das credenciais do usuário
                 JSONObject jsonInput = new JSONObject();
                 jsonInput.put("usuario", username);
                 jsonInput.put("senha", password);
@@ -99,32 +125,35 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(TAG, "Erro na autenticação", e);
             }
-            return result;
-        }
 
-        @Override
-        protected void onPostExecute(String result) {
-            MainActivity activity = activityReference.get();
-            if (activity == null || activity.isFinishing()) return;
+            final String finalResult = result;
+            runOnUiThread(() -> processResult(finalResult));
+        });
+    }
 
-            try {
-                // Processar o JSON de resposta
-                JSONObject jsonResponse = new JSONObject(result);
-                String token = jsonResponse.getString("token");
+    private void processResult(String result) {
+        progressBar.setVisibility(View.GONE);
+        try {
+            // Processar o JSON de resposta
+            JSONObject jsonResponse = new JSONObject(result);
+            String token = jsonResponse.getString("token");
 
-                if (!token.equals("0")) {
-                    Toast.makeText(activity, "Login bem-sucedido! Token recebido: " + token, Toast.LENGTH_SHORT).show();
-                    // Redirecionar para a tela principal
-                    Intent intent = new Intent(activity, MainScreenActivity.class);
-                    activity.startActivity(intent);
-                    activity.finish();
-                } else {
-                    Toast.makeText(activity, "Usuário ou senha incorretos!", Toast.LENGTH_SHORT).show();
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Erro ao processar resposta JSON", e);
-                Toast.makeText(activity, "Erro! Verifique a conexão com a internet.", Toast.LENGTH_SHORT).show();
-            }
+            // Salvar o token no SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("auth_token", token);
+            editor.apply();
+
+            Toast.makeText(MainActivity.this, "Login bem-sucedido!", Toast.LENGTH_LONG).show();
+
+            // Chamar a MainScreenActivity após login bem-sucedido
+            goToMainScreen();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Erro ao processar resposta JSON", e);
+            Toast.makeText(MainActivity.this, "Erro ao fazer login. Verifique usuário, senha e conexão.", Toast.LENGTH_SHORT).show();
+            // Reabilitar o botão "Enviar" em caso de erro
+            btnLogin.setEnabled(true);
         }
     }
 }

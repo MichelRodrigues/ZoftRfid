@@ -58,6 +58,8 @@ public class TagRegistrationActivity extends AppCompatActivity {
         initViews();
         setupFooterIcons();
         setupListeners();
+
+        showToast("Aperte + para iniciar um novo cadastro");
     }
 
     private void initViews() {

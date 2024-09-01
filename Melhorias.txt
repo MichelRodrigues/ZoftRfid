@@ -1,0 +1,40 @@
+Melhorias:
+
+<------ Tela de Login ------>
+
+- Salvar permanente usuário
+- Caixa seleção de seleção "manter conectado"
+- Impressão digital ou padrão
+- Pular direto para a tela principal em caso de autenticação perma
+
+
+<------ Tela do Menu principal ------>
+
+- Alguma informação de direitos ou powered by
+- Opção "Sair"
+- Opção "Sobre"?
+- Opção "Ajuda"? Redireciona para algum site ou para vídeos tutoriais
+
+
+<------ Tela de Cadastro ------>
+
+- 
+- 
+
+<------ Tela de Busca ------>
+
+- 
+-
+
+<------ Tela de Consulta ------>
+
+- 
+-
+
+
+<------ Tela de Inventário ------>
+
+- 
+-
+-
+-
