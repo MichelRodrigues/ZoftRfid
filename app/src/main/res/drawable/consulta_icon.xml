@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <bitmap
-            android:src="@drawable/consulta_0"
+            android:src="@drawable/maisconsulta"
             android:gravity="center"
             android:width="48dp"
             android:height="48dp"/>

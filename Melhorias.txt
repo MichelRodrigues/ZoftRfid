@@ -5,11 +5,12 @@ Melhorias:
 - Salvar permanente usuário
 - Caixa seleção de seleção "manter conectado"
 - Impressão digital ou padrão
-- Pular direto para a tela principal em caso de autenticação perma
+- Pular direto para a tela principal em caso de autenticação permanente
 
 
 <------ Tela do Menu principal ------>
 
+- Ajustar os ícones que estão horríveis
 - Alguma informação de direitos ou powered by
 - Opção "Sair"
 - Opção "Sobre"?
@@ -18,7 +19,7 @@ Melhorias:
 
 <------ Tela de Cadastro ------>
 
-- 
+- Analisar questões do foco
 - 
 
 <------ Tela de Busca ------>

@@ -13,5 +13,8 @@
     <string name="cadastro">ícone de cadastro</string>
     <string name="ícone_voltar">ícone voltar</string>
     <string name="icone_voltar">icone_voltar</string>
+    <string name="about_text"><u>Sobre</u></string>
+    <string name="exit_text"><u>Sair</u></string>
+    <string name="settings_text"><u>Configurações</u></string>
 
 </resources>

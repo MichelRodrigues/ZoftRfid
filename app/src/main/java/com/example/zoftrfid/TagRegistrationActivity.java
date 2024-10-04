@@ -1,9 +1,10 @@
 package com.example.zoftrfid;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -18,17 +19,51 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
+import android.os.Looper;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.rfid.trans.ReaderHelp;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.rfid.trans.OtgUtils;
+import com.rfid.trans.ReadTag;
+import com.rfid.trans.ReaderHelp;
+import com.rfid.trans.ReaderParameter;
+import com.rfid.trans.TagCallback;
+import java.util.HashSet;
+
+import android.media.ToneGenerator;
+import android.media.AudioManager;
+
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+
+
+import java.io.IOException;
+
+import java.util.HashSet;
 import java.util.Random;
+import android.content.SharedPreferences;
+
 
 public class TagRegistrationActivity extends AppCompatActivity {
 
@@ -48,6 +83,16 @@ public class TagRegistrationActivity extends AppCompatActivity {
     private EditText etNotaNumero;
     private boolean isNotaNumeroEmpty = true;
     private boolean isRowTouched = false;
+    private OkHttpClient client;
+    private boolean keyPress = false; // Variável para controlar o estado da tecla
+    private boolean isStopThread = false;
+    private TextView tvTotalTags;
+    private ReaderHelp readerHelp;
+    private int cardNumber = 0;  // Adicione esta variável para contar as tags
+    private HashSet<String> readTags;  // Conjunto para armazenar tags lidas
+    private SeekBar seekBarPower;
+    private final int MAX_POWER = 33;  // Máximo valor de potência (33)
+    private ToneGenerator toneGenerator;
 
 
     @Override
@@ -59,7 +104,44 @@ public class TagRegistrationActivity extends AppCompatActivity {
         setupFooterIcons();
         setupListeners();
 
+        client = new OkHttpClient();
+
         showToast("Aperte + para iniciar um novo cadastro");
+
+        // Inicializa a instância do ReaderHelp
+        readerHelp = new ReaderHelp();
+
+        readTags = new HashSet<>();  // Inicializa o
+        seekBarPower = findViewById(R.id.seekBarPower);
+
+        seekBarPower.setProgress(MAX_POWER);
+
+        // Configura o valor de potência inicial para o máximo assim que o app abrir
+        setReaderPower(MAX_POWER);
+
+        // Define o comportamento do SeekBar ao ser deslizado
+        seekBarPower.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Chama a função SetRfPower com o valor do SeekBar (progress)
+                setReaderPower(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Não precisamos de nada aqui por enquanto
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Quando o usuário soltar o SeekBar, você pode realizar outra ação, se necessário
+            }
+        });
+
+
+        toneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+
+        tvTotalTags = findViewById(R.id.tvTotal);
     }
 
     private void initViews() {
@@ -86,6 +168,24 @@ public class TagRegistrationActivity extends AppCompatActivity {
         SpannableString spannableProductHint = new SpannableString(" Toque aqui para inserir ou use o leitor");
         spannableProductHint.setSpan(new StyleSpan(Typeface.ITALIC), 0, spannableProductHint.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         etProductCode.setHint(spannableProductHint);
+    }
+    private void setReaderPower(int power) {
+        try {
+            // Bit7 = 0 indica que a configuração deve ser salva após o desligamento
+            // Para fazer isso, usamos bitwise OR para garantir que o Bit7 seja 0
+            int powerConfig = power & 0x7F;  // Garante que o Bit7 seja 0
+
+            // Chama a função SetRfPower do ReaderHelp com o valor de potência ajustado
+            int result = readerHelp.SetRfPower((byte) powerConfig);
+
+            if (result == 0) {
+                Log.d("RFID", "Potência ajustada com sucesso: " + power);
+            } else {
+                Log.e("RFID", "Erro ao ajustar potência, código: " + result);
+            }
+        } catch (Exception e) {
+            Log.e("RFID", "Erro ao ajustar a potência do leitor RFID", e);
+        }
     }
 
     private void setupFooterIcons() {
@@ -115,10 +215,14 @@ public class TagRegistrationActivity extends AppCompatActivity {
         etProductCode.setOnFocusChangeListener((v, hasFocus) -> {
             if (etProductCode.getText().length() > 0 && !hasFocus) {
                 resetIcon.setVisibility(View.VISIBLE);
-                showToast(TOAST_BUSCANDO_DADOS);
+                fetchProductData(etProductCode.getText().toString().trim());
+
                 etProductCode.setEnabled(false);
             }
         });
+
+
+
 
         etNotaNumero.addTextChangedListener(createTextWatcher());
         etNotaNumero.setOnClickListener(v -> showNotaEntradaPopup());
@@ -174,9 +278,13 @@ public class TagRegistrationActivity extends AppCompatActivity {
             btnVincular.setVisibility(View.VISIBLE);
             etProductCode.setEnabled(true);
             etProductCode.requestFocus();
+            etDescription.setFocusable(false); // Evita focar o campo diretamente com toque
             fieldsContainer2.setVisibility(View.GONE);
             etProductCode.setText("");
             isRowTouched = false;
+            etTags.setShowSoftInputOnFocus(false); // Desativa o teclado ao tocar no campo
+            etProductCode.setShowSoftInputOnFocus(false); // Desativa o teclado ao tocar no campo
+            //etDescription.setShowSoftInputOnFocus(false); // Desativa o teclado ao tocar no campo;
         });
         builder.show();
     }
@@ -256,6 +364,7 @@ public class TagRegistrationActivity extends AppCompatActivity {
                     btnVoltar.setVisibility(View.VISIBLE);
                     resetIcon.setVisibility(View.VISIBLE);
                     etProductCode.requestFocus();
+                    fetchProductData(productCode);
                     hideKeyboard(input);
                     dialog.dismiss();
                 }
@@ -264,6 +373,74 @@ public class TagRegistrationActivity extends AppCompatActivity {
 
         dialog.show();
     }
+    private void fetchProductData(String codigoBarra) {
+        etTags.requestFocus(); // Foca na caixa de texto etTags
+
+        // Recuperar o token dos SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("authToken", null);
+
+        if (token != null) {
+            // Criar uma nova instância de Request para cada requisição
+            String url = "http://177.234.156.125:9000/produto/" + codigoBarra;
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header("Authorization", "Bearer " + token)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    runOnUiThread(() -> {
+                        Log.e("FetchProductData", "Erro na requisição: " + e.getMessage());
+                        showToast("Erro ao buscar dados do produto.");
+                    });
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    try {
+                        if (response.isSuccessful()) {
+                            String responseBody = response.body().string();
+                            Log.d("FetchProductData", "Resposta do servidor: " + responseBody);
+
+                            try {
+                                JSONObject jsonResponse = new JSONObject(responseBody);
+                                String descricao = jsonResponse.getString("descricaodetalhada");
+
+                                runOnUiThread(() -> {
+                                    String currentText = etDescription.getText().toString();
+                                    etDescription.setText(currentText + "\n" + descricao);
+
+                                    String requestNumber = null;
+                                    showToast("Resposta " + null + " recebida");
+                                });
+                            } catch (JSONException e) {
+                                Log.e("FetchProductData", "Erro ao processar JSON: " + e.getMessage());
+                                runOnUiThread(() -> showToast("Erro ao processar dados do produto."));
+                            }
+                        } else {
+                            runOnUiThread(() -> showToast("Erro na resposta do servidor."));
+                        }
+                    } finally {
+                        // Fechar explicitamente a resposta para garantir que a conexão seja liberada
+                        if (response.body() != null) {
+                            response.body().close();
+                        }
+                    }
+                }
+            });
+
+        } else {
+            Log.d("TokenDebug", "Nenhum token encontrado.");
+            showToast("Token de autenticação não encontrado.");
+        }
+    }
+
+
+
+
 
     private void handleResetIconVisibility() {
         if ((etProductCode.getText().length() > 0 || etNotaNumero.getText().length() > 0 || etTags.getText().length() > 0) && fabAdd.getVisibility() != View.VISIBLE) {
@@ -447,4 +624,5 @@ public class TagRegistrationActivity extends AppCompatActivity {
         }
         return sb.toString();
     }
+    
 }

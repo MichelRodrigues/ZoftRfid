@@ -145,15 +145,26 @@
             android:scrollbars="vertical" />
 
         <!-- Botão Vincular -->
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="260dp"
+            android:layout_marginTop="4dp"
+            android:text="Total:"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
         <Button
             android:id="@+id/btnVincular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="0dp"
             android:backgroundTint="#7a52d7"
             android:text="Vincular"
             android:textColor="#FFFFFF" />
+
     </LinearLayout>
 
     <!-- Modifications start here -->
@@ -277,9 +288,79 @@
         </ScrollView>
 
     </LinearLayout>
-    <!-- Modifications end here -->
 
-    <!-- Botão Flutuante -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fieldsContainerPower"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeader">
+
+        <!-- Ajuste de Potência -->
+        <SeekBar
+            android:id="@+id/seekBarPower"
+            android:layout_width="214dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="24dp"
+            android:max="33"
+            android:progress="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tvMin"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.825" />
+
+        <!-- Potência de leitura (texto acima da SeekBar) -->
+        <TextView
+            android:id="@+id/tvReadingPower"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="480dp"
+            android:layout_marginBottom="8dp"
+            android:text="Potência de leitura"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/seekBarPower"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Texto Máx. -->
+
+        <!-- Texto Mín. -->
+
+        <TextView
+            android:id="@+id/tvMax"
+            android:layout_width="37dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="20dp"
+            android:text="Máx."
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.831" />
+
+        <TextView
+            android:id="@+id/tvMin"
+            android:layout_width="31dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="20dp"
+            android:text="Mín."
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.829" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"

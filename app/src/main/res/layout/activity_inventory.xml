@@ -206,37 +206,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/containerLastRecords"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/fab_add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvHeader">
 
-        <TextView
-            android:id="@+id/lastRecordsTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Últimos Registros"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center_horizontal"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp" />
-
-        <ListView
-            android:id="@+id/listLastRecords"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="8dp" />
-
-    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
@@ -259,6 +229,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="Save"
         android:src="@drawable/disk_0"
+        android:visibility="gone"
         app:backgroundTint="#7a52d7"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
